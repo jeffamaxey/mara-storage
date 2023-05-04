@@ -33,7 +33,7 @@ def __(alias: str, file_name: str, compression: Compression = Compression.NONE):
 
 @read_file_command.register(storages.LocalStorage)
 def __(storage: storages.LocalStorage, file_name: str, compression: Compression = Compression.NONE):
-    return f'{uncompressor(compression)} '+shlex.quote(str( (storage.base_path / file_name).absolute() ))
+    return f'{uncompressor(compression)} {shlex.quote(str((storage.base_path / file_name).absolute()))}'
 
 
 @read_file_command.register(storages.GoogleCloudStorage)
@@ -76,7 +76,7 @@ def __(storage: storages.LocalStorage, file_name: str, compression: Compression 
 
     full_path = (storage.base_path / file_name).absolute()
     if compression == Compression.GZIP:
-        return 'gzip > ' + shlex.quote(str( full_path ))
+        return f'gzip > {shlex.quote(str(full_path))}'
     elif compression == Compression.ZIP:
         # the name which shall be used in the zip file
         if full_path.suffix[1:] == file_extension(compression):
@@ -87,7 +87,7 @@ def __(storage: storages.LocalStorage, file_name: str, compression: Compression 
         return f'(zip {shlex.quote(str( full_path ))} - \\\n' \
                + f'     && printf "@ -\\n@={shlex.quote(zip_file_name)}\\n" | zipnote -w {shlex.quote(str( full_path ))})'
     else:
-        return 'cat - > ' + shlex.quote(str( full_path ))
+        return f'cat - > {shlex.quote(str(full_path))}'
 
 
 @write_file_command.register(storages.GoogleCloudStorage)

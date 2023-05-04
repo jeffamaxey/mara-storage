@@ -11,11 +11,10 @@ class StorageClient():
         if storage is None:
             raise ValueError('Please provide the storage prameter')
 
-        if cls is StorageClient:
-            cls = storage_client_type(storage)
-            return cls(storage)
-        else:
+        if cls is not StorageClient:
             return super(StorageClient, cls).__new__(cls)
+        cls = storage_client_type(storage)
+        return cls(storage)
 
     def __init__(self, storage: t.Union[str, storages.Storage]):
         if isinstance(storage, str):

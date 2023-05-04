@@ -13,15 +13,14 @@ class GoogleCloudStorageClient(StorageClient):
         if storage is None:
             raise ValueError('Parameter storage is required')
 
-        if cls is GoogleCloudStorageClient:
-            if importlib.util.find_spec('storage', package='google.cloud'):
-                cls = GoogleCloudStorageModuleClient
-            else:
-                # fallback client using 'gsutil' shell command
-                cls = GoogleCloudStorageShellClient
-            return cls(storage)
-        else:
+        if cls is not GoogleCloudStorageClient:
             return super(GoogleCloudStorageClient, cls).__new__(cls, storage)
+        cls = (
+            GoogleCloudStorageModuleClient
+            if importlib.util.find_spec('storage', package='google.cloud')
+            else GoogleCloudStorageShellClient
+        )
+        return cls(storage)
 
     def __init__(self, storage: storages.GoogleCloudStorage):
         super().__init__(storage)

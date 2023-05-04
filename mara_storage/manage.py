@@ -25,9 +25,14 @@ def __(storage: storages.GoogleCloudStorage):
     import subprocess
 
     # command returning 0 when storage exists
-    test_exists_command = (f'gsutil -q '
-                            + (f'-o Credentials:gs_service_key_file={shlex.quote(storage.service_account_file)} ' if storage.service_account_file else '')
-                            + f'ls {shlex.quote(storage.base_uri)}')
+    test_exists_command = (
+        'gsutil -q '
+        + (
+            f'-o Credentials:gs_service_key_file={shlex.quote(storage.service_account_file)} '
+            if storage.service_account_file
+            else ''
+        )
+    ) + f'ls {shlex.quote(storage.base_uri)}'
 
     # command returning 0 when bucket was created
     create_storage_command = ('gsutil '
